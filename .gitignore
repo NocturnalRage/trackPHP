@@ -1,0 +1,35 @@
+# Composer dependencies
+/vendor/
+
+# PHPUnit
+/phpunit.xml
+/phpunit.xml.cache
+
+# Code coverage reports
+/coverage/
+
+# Logs
+*.log
+
+# Environment variables
+.env
+.env.*.local
+
+# OS-specific
+.DS_Store
+Thumbs.db
+
+# Editor-specific
+.idea/
+.vscode/
+
+# Build artifacts or temporary files
+*.bak
+*.tmp
+
+# Cache (optional, if you add caching)
+/cache/
+
+# PHPStorm
+*.iml
+

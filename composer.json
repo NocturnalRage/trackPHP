@@ -1,0 +1,25 @@
+{
+    "name": "nocturnalrage/trackphp",
+    "description": "A lightweight, convention-driven PHP framework. Stay on track!",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "TrackPHP\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "TrackPHP\\Tests\\": "tests/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Jeff Plumb",
+            "email": "quiet.year9434@plumbmail.com"
+        }
+    ],
+    "require-dev": {
+        "phpunit/phpunit": "^12.3"
+    }
+}

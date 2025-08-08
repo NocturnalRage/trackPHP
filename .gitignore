@@ -4,6 +4,8 @@
 # PHPUnit
 /phpunit.xml
 /phpunit.xml.cache
+.phpunit.cache/
+.phpunit.result.cache
 
 # Code coverage reports
 /coverage/

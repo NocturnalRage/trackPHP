@@ -8,6 +8,31 @@ use TrackPHP\Router\Route;
 
 final class RouterTest extends TestCase
 {
+    public function test_adding_a_route_with_duplicate_param_names_throws_exception(): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Duplicate route parameters not allowed: id');
+
+        $router = new Router();
+        $router->get('/posts/{id}/comments/{id}', 'comments#show');
+    }
+
+    public function test_it_registers_root_path(): void
+    {
+        $router = new Router();
+        $router->get('/', 'home#index');
+
+        $route = $router->match('GET', '/');
+
+        $this->assertInstanceOf(Route::class, $route);
+        $this->assertSame('GET', $route->method);
+        $this->assertSame('/', $route->pattern);
+        $this->assertSame('#^/$#', $route->regexPattern);
+        $this->assertSame('HomeController', $route->controller);
+        $this->assertSame('index', $route->action);
+        $this->assertSame([], $route->params);
+    }
+
     public function test_it_registers_a_get_route_with_no_params(): void
     {
         $router = new Router();
@@ -161,6 +186,61 @@ final class RouterTest extends TestCase
         $this->assertNull($r->match('GET', '/posts//comments/56'));   // missing postId
         $this->assertNull($r->match('GET', '/posts/42/comments/'));   // missing commentId
         $this->assertNull($r->match('GET', '/posts/42/comments//'));   // missing commentId with ending slash
+    }
+
+    public function test_it_generates_path_for_unnamed_static_route() {
+        $router = new Router();
+        $router->get('/now', 'staticPages#now');
+        $this->assertSame('/now', $router->path('staticPages.now'));
+    }
+
+    public function test_it_generates_path_for_named_static_route() {
+        $router = new Router();
+        $router->get('/about', 'pages#about', 'custom');
+        $this->assertSame('/about', $router->path('custom'));
+    }
+
+    public function test_it_generates_path_for_dynamic_route() {
+        $router = new Router();
+        $router->get('/post/{id}', 'post#show');
+        $this->assertSame('/post/1', $router->path('post.show', ['id'=>1]));
+    }
+
+    public function test_it_generates_path_for_dynamic_route_with_multiple_params() {
+        $router = new Router();
+        $router->get('/post/{post}/comments/{comment}', 'comments#show');
+        $this->assertSame('/post/1/comments/2', $router->path('comments.show', ['post'=>1, 'comment'=>2]));
+    }
+
+    public function test_it_throws_exception_if_named_route_does_not_exist() {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage("No route found with name: nonexistent");
+        $router = new Router();
+        $router->path('nonexistent');
+    }
+
+    public function test_it_throws_exception_if_not_enough_parameters_provided() {
+        $router = new Router();
+        $router->get('/posts/{postId}/comments/{commentId}', 'comments#show', name: 'comment_show');
+
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage("Missing parameter 'commentId' for route 'comment_show");
+        $router->path('comment_show', ['postId' => 1]);
+    }
+
+    public function test_it_replaces_all_placeholders_correctly() {
+        $router = new Router();
+        $router->get('/posts/{postId}/comments/{commentId}', 'comments#show');
+
+        $url = $router->path('comments.show', ['postId' => 42, 'commentId' => 7]);
+        $this->assertSame('/posts/42/comments/7', $url);
+    }
+
+    public function test_it_ignores_extra_parameters() {
+        $router = new Router();
+        $router->get('/users/{id}', 'users#show', name: 'user_show');
+        $url = $router->path('user_show', ['id' => 5, 'extra' => 'value']);
+        $this->assertSame('/users/5', $url);
     }
 }
 

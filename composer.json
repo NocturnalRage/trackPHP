@@ -5,7 +5,8 @@
     "license": "MIT",
     "autoload": {
         "psr-4": {
-            "TrackPHP\\": "src/"
+            "TrackPHP\\": "src/",
+            "App\\Controllers\\": "app/Controllers/"
         }
     },
     "autoload-dev": {

@@ -15,6 +15,7 @@ final class RouteTest extends TestCase
             regexPattern: '#^/posts/([^/]+)$#',
             controller: 'PostController',
             action: 'show',
+            paramNames: ['id'],
             params: ['id' => '42']
         );
 
@@ -23,6 +24,7 @@ final class RouteTest extends TestCase
         $this->assertSame('#^/posts/([^/]+)$#', $route->regexPattern);
         $this->assertSame('PostController', $route->controller);
         $this->assertSame('show', $route->action);
+        $this->assertSame(['id'], $route->paramNames);
         $this->assertSame(['id' => '42'], $route->params);
     }
 }
